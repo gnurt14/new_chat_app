@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:new_chat_app/features/auth/repository/auth_repository.dart';
 
+import '../../../models/user_model.dart';
+
 final authControllerProvider = Provider((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return AuthController(authRepository: authRepository, ref: ref);
+});
+
+final userDataAuthProvider = FutureProvider((ref) {
+  final authController = ref.watch(authControllerProvider);
+  return authController.getCurrentUserData();
 });
 
 class AuthController {
@@ -14,6 +21,11 @@ class AuthController {
   final ProviderRef ref;
 
   AuthController({required this.authRepository, required this.ref});
+
+  Future<UserModel?> getCurrentUserData() async{
+    UserModel? user = await authRepository.getCurrentUserData();
+    return user;
+  }
 
   void signInWithPhone(BuildContext context, String phoneNumber) {
     authRepository.signInWithPhone(context, phoneNumber);
