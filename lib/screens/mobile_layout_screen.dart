@@ -13,7 +13,7 @@ class MobileLayoutScreen extends StatelessWidget{
         onPressed: (){
           Navigator.pushNamed(context, SelectContactsScreen.routeName);
         },
-        backgroundColor: AppColors.tabColor,
+        backgroundColor: AppColors.buttonColor,
         child: const Icon(
           Icons.comment,
           color: Colors.white,

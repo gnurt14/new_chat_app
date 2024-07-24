@@ -5,6 +5,8 @@ import 'package:new_chat_app/features/auth/screens/otp_screen.dart';
 import 'package:new_chat_app/features/auth/screens/user_information_screen.dart';
 import 'package:new_chat_app/features/select_contacts/screens/select_contacts_screen.dart';
 
+import 'features/chat/screen/mobile_chat_screen.dart';
+
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case LoginScreen.routeName:
@@ -24,6 +26,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case SelectContactsScreen.routeName:
       return MaterialPageRoute(
           builder: (context) => const SelectContactsScreen());
+    case MobileChatScreen.routeName:
+      final arguments = settings.arguments as Map<String, dynamic>;
+      final name = arguments['name'];
+      final uid = arguments['uid'];
+      return MaterialPageRoute(
+          builder: (context) => MobileChatScreen(
+            uid: uid,
+            name: name,
+          ));
     default:
       return MaterialPageRoute(
         builder: (context) => const Scaffold(
