@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:new_chat_app/common/enums/message_enum.dart';
 
 class Message{
@@ -25,7 +26,7 @@ class Message{
       'receiverId': receiverId,
       'text': text,
       'type': type.type,
-      'timeSent': timeSent.microsecondsSinceEpoch,
+      'timeSent': timeSent,
       'messageId': messageId,
       'isSeen': isSeen,
     };
@@ -37,7 +38,9 @@ class Message{
       receiverId: map['receiverId'] ?? '',
       text: map['text'] ?? '',
       type: (map['type'] as String).toEnum(),
-      timeSent: map['timeSent'] ?? '',
+      timeSent: map['timeSent'] is Timestamp
+          ? (map['timeSent'] as Timestamp).toDate()
+          : DateTime.fromMillisecondsSinceEpoch(map['timeSent'] as int),
       messageId: map['messageId'] ?? '',
       isSeen: map['isSeen'] ?? false,
     );

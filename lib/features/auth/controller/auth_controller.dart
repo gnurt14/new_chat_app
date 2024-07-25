@@ -16,6 +16,11 @@ final userDataAuthProvider = FutureProvider((ref) {
   return authController.getCurrentUserData();
 });
 
+final userStreamProvider = StreamProvider.autoDispose.family((ref, String uid) {
+  return ref.read(authControllerProvider).userDataById(uid);
+});
+
+
 class AuthController {
   final AuthRepository authRepository;
   final ProviderRef ref;

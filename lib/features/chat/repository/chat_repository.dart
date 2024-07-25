@@ -22,6 +22,69 @@ class ChatRepository {
     required this.auth,
   });
 
+  Stream<List<ChatContact>> getChatContacts() {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection('chats')
+        .snapshots()
+        .asyncMap((event) async {
+      try {
+        List<ChatContact> contacts = [];
+        final contactIds = event.docs
+            .map((e) => ChatContact.fromMap(e.data()).contactId)
+            .toList();
+        final usersData = await firestore
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: contactIds)
+            .get();
+
+        for (var element in event.docs) {
+          var chatContact = ChatContact.fromMap(element.data());
+          final userData =
+              usersData.docs.firstWhere((e) => e.id == chatContact.contactId);
+          var user = UserModel.fromMap(userData.data());
+
+          contacts.add(ChatContact(
+            name: user.name,
+            profilePic: user.profilePic,
+            contactId: chatContact.contactId,
+            timeSent: chatContact.timeSent,
+            lastMessage: chatContact.lastMessage,
+          ));
+        }
+        return contacts;
+      } catch (e) {
+        print('Error fetching chat contacts: $e');
+        return []; // Return an empty list in case of an error
+      }
+    });
+  }
+
+  Stream<List<Message>> getChatStream(String receiverId) {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .collection('chats')
+        .doc(receiverId)
+        .collection('messages')
+        .orderBy('timeSent')
+        .snapshots()
+        .asyncMap((event) async{
+      List<Message> messages = [];
+      try{
+        for (var document in event.docs) {
+          messages.add(Message.fromMap(document.data()));
+        }
+        return messages;
+      }
+      catch (e){
+        print('Error get chat stream: $e');
+        return [];
+      }
+    });
+  }
+
   void _saveDataToContactsSubCollection(
     UserModel senderUserData,
     UserModel receiverUserData,
