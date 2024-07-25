@@ -53,7 +53,7 @@ class MobileChatScreen extends ConsumerWidget{
               height: MediaQuery.of(context).size.height * 0.85,
               child: ChatList(),
             ),
-            BottomChatField(chatController: controller,),
+            BottomChatField(receiverId: uid,),
           ],
         ),
       ),

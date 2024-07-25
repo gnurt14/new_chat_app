@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:new_chat_app/features/chat/controller/chat_controller.dart';
 import '../../../core/configs/theme/app_colors.dart';
 
-class BottomChatField extends StatefulWidget {
-  TextEditingController chatController = TextEditingController();
+class BottomChatField extends ConsumerStatefulWidget {
+  final String receiverId;
 
-  BottomChatField({super.key, required this.chatController});
+  BottomChatField({super.key, required this.receiverId});
 
   @override
-  State<BottomChatField> createState() => _BottomChatFieldState();
+  ConsumerState<BottomChatField> createState() => _BottomChatFieldState();
 }
 
-class _BottomChatFieldState extends State<BottomChatField> {
+class _BottomChatFieldState extends ConsumerState<BottomChatField> {
+  final TextEditingController _messageController = TextEditingController();
   bool isShowSendButton = false;
+
+  void sendTextMessage() async{
+    if(isShowSendButton){
+      ref.read(chatControllerProvider).sendTextMessage(context, _messageController.text.trim(), widget.receiverId);
+      setState(() {
+        _messageController.text = '';
+      });
+    }
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    _messageController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -31,7 +50,7 @@ class _BottomChatFieldState extends State<BottomChatField> {
                 });
               }
             },
-            controller: widget.chatController,
+            controller: _messageController,
             style: const TextStyle(
               color: AppColors.textColor,
             ),
@@ -106,7 +125,7 @@ class _BottomChatFieldState extends State<BottomChatField> {
                 color: AppColors.buttonColor,
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: sendTextMessage,
                 icon: Icon(
                   isShowSendButton ? Icons.send : Icons.mic,
                   color: AppColors.textColor,
