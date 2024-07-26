@@ -50,6 +50,7 @@ class MyMessageCard extends StatelessWidget {
                     child: DisplayTextImageGif(message: message, type: type,),
                   ),
                 ],
+
               ),
               const SizedBox(height: 4),
               Text(
