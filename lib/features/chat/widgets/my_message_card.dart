@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:new_chat_app/core/configs/theme/app_colors.dart';
+import 'package:new_chat_app/features/chat/widgets/display_text_image_gif.dart';
+
+import '../../../common/enums/message_enum.dart';
 
 class MyMessageCard extends StatelessWidget {
   final String message;
   final String date;
+  final MessageEnum type;
 
-  MyMessageCard({super.key, required this.message, required this.date});
+  MyMessageCard({
+    super.key,
+    required this.message,
+    required this.date,
+    required this.type,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +47,7 @@ class MyMessageCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                        color: AppColors.textColor,
-                        fontSize: 16,
-                      ),
-                    ),
+                    child: DisplayTextImageGif(message: message, type: type,),
                   ),
                 ],
               ),

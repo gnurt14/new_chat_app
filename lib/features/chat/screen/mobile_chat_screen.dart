@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:new_chat_app/features/auth/controller/auth_controller.dart';
 
 import '../../../common/widgets/loader.dart';
 import '../../../core/configs/theme/app_colors.dart';
-import '../../auth/controller/auth_controller.dart';
 import '../widgets/bottom_chat_field.dart';
 import '../widgets/chat_list.dart';
 

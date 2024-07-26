@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:new_chat_app/common/widgets/my_message_card.dart';
-import 'package:new_chat_app/common/widgets/my_message_other_card.dart';
+import 'package:new_chat_app/features/chat/widgets/my_message_card.dart';
 import 'package:new_chat_app/features/chat/controller/chat_controller.dart';
 
 import '../../../core/configs/theme/app_colors.dart';
 import '../../../models/message.dart';
+import 'my_message_other_card.dart';
 
 class ChatList extends ConsumerStatefulWidget {
   final String receiverId;
@@ -64,11 +64,13 @@ class _ChatListState extends ConsumerState<ChatList> {
               return MyMessageCard(
                 message: messages.text,
                 date: DateFormat.Hm().format(messages.timeSent),
+                type: messages.type,
               );
             } else {
               return MyMessageOtherCard(
                 message: messages.text,
                 date: DateFormat.Hm().format(messages.timeSent),
+                type: messages.type,
               );
             }
           },
