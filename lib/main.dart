@@ -9,13 +9,14 @@ import 'package:new_chat_app/features/landing/screens.dart';
 import 'package:new_chat_app/firebase_options.dart';
 import 'package:new_chat_app/router.dart';
 import 'package:new_chat_app/screens/mobile_layout_screen.dart';
+import 'package:new_chat_app/them_notifier.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform
   );
-  runApp( const ProviderScope(
+  runApp(const ProviderScope(
     child: MyApp()
   ));
 }
@@ -28,16 +29,17 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
+      themeMode: ref.watch(themeProvider),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: (settings) => generateRoute(settings),
       home: ref.watch(userDataAuthProvider).when(
-        data: (user){
-          if(user == null){
+        data: (user) {
+          if (user == null) {
             return const LandingScreen();
           }
           return const MobileLayoutScreen();
         },
-        error: (err, trace){
+        error: (err, trace) {
           return ErrorScreen(error: err.toString());
         },
         loading: () => const Loader(),

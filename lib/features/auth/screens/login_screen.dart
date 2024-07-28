@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:new_chat_app/common/utils/utils.dart';
 import 'package:new_chat_app/common/widgets/custom_button.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:new_chat_app/core/configs/constants/is_dark.dart';
 import '../../../core/configs/theme/app_colors.dart';
 import '../controller/auth_controller.dart';
 
@@ -17,6 +18,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final phoneController = TextEditingController();
+  bool isLoading = false;
   Country? country;
 
   @override
@@ -35,12 +37,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         });
   }
 
-  void sendPhoneNumber() {
+  void sendPhoneNumber() async {
     String phoneNumber = phoneController.text.trim();
     if (country != null && phoneNumber.isNotEmpty) {
-      ref
-          .read(authControllerProvider)
-          .signInWithPhone(context, '+${country!.phoneCode}$phoneNumber');
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        await ref
+            .read(authControllerProvider)
+            .signInWithPhone(context, '+${country!.phoneCode}$phoneNumber');
+      } catch (e) {
+        showSnackBar(context: context, content: e.toString());
+      }
     } else {
       showSnackBar(context: context, content: 'Fill out all the fields');
     }
@@ -65,10 +74,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'WhatsApp will need to verify your phone number',
                 style: TextStyle(
-                  color: AppColors.textColor,
+                  color:context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                 ),
               ),
               const SizedBox(
@@ -84,8 +93,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   if (country != null)
                     Text(
                       '+${country!.phoneCode}',
-                      style: const TextStyle(
-                        color: AppColors.textColor,
+                      style: TextStyle(
+                        color:context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                       ),
                     ),
                   const SizedBox(
@@ -95,14 +104,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: size.width * 0.7,
                     child: TextField(
                       controller: phoneController,
-                      style: const TextStyle(
-                        // <-- const added
-                        color: AppColors.textColor,
+                      style: TextStyle(
+                        color: context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           hintText: 'Phone number',
                           hintStyle: TextStyle(
-                            color: AppColors.textColor,
+                            color: context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                             fontWeight: FontWeight.w300,
                           )),
                     ),
@@ -114,7 +122,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
               SizedBox(
                 width: 90,
-                child: CustomButton(onPressed: sendPhoneNumber, text: 'NEXT'),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : CustomButton(onPressed: sendPhoneNumber, text: 'NEXT'),
               )
             ],
           ),

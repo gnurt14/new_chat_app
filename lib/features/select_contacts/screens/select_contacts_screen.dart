@@ -3,6 +3,7 @@ import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:new_chat_app/common/widgets/error.dart';
 import 'package:new_chat_app/common/widgets/loader.dart';
+import 'package:new_chat_app/core/configs/constants/is_dark.dart';
 import 'package:new_chat_app/features/select_contacts/controller/select_contact_controller.dart';
 
 import '../../../core/configs/theme/app_colors.dart';
@@ -48,8 +49,8 @@ class SelectContactsScreen extends ConsumerWidget {
                   child: ListTile(
                     title: Text(
                       contact.displayName,
-                      style: const TextStyle(
-                        color: AppColors.textColor,
+                      style: TextStyle(
+                        color: context.isDarkMode ? AppColors.textColor:  AppColors.darkTextColor,
                         fontSize: 18,
                       ),
                     ),

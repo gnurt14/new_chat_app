@@ -32,9 +32,10 @@ class AuthController {
     return user;
   }
 
-  void signInWithPhone(BuildContext context, String phoneNumber) {
-    authRepository.signInWithPhone(context, phoneNumber);
+  Future<void> signInWithPhone(BuildContext context, String phoneNumber) {
+    return authRepository.signInWithPhone(context, phoneNumber);
   }
+
 
   void verifyOTP(BuildContext context, String verificationId, String userOTP) {
     authRepository.verifyOTP(

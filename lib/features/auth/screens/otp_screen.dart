@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:new_chat_app/core/configs/constants/is_dark.dart';
 import 'package:new_chat_app/core/configs/theme/app_colors.dart';
 import 'package:new_chat_app/features/auth/controller/auth_controller.dart';
 
@@ -32,23 +33,23 @@ class OTPScreen extends ConsumerWidget {
             const SizedBox(
               height: 20,
             ),
-            const Text(
+            Text(
               'We have sent an SMS with a code',
               style: TextStyle(
-                color: AppColors.textColor,
+                color: context.isDarkMode ? Colors.white : AppColors.darkTextColor,
               ),
             ),
             SizedBox(
               width: size.width * 0.5,
               child: TextField(
-                style: const TextStyle(
-                  color: AppColors.textColor,
+                style: TextStyle(
+                  color: context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                 ),
                 textAlign: TextAlign.center,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '- - - - - -',
                   hintStyle: TextStyle(
-                    color: AppColors.textColor,
+                    color: context.isDarkMode ? Colors.white : AppColors.darkTextColor,
                     fontSize: 30,
                   ),
                 ),

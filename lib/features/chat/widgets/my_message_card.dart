@@ -27,7 +27,10 @@ class MyMessageCard extends StatelessWidget {
         ),
         child: Container(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.75,
+            maxWidth: MediaQuery
+                .of(context)
+                .size
+                .width * 0.75,
           ),
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           padding: const EdgeInsets.all(12.0),
@@ -47,18 +50,29 @@ class MyMessageCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(
-                    child: DisplayTextImageGif(message: message, type: type,),
+                    child: DisplayTextImageGif(
+                      message: message,
+                      type: type,
+                    ),
                   ),
                 ],
-
               ),
               const SizedBox(height: 4),
-              Text(
-                date,
-                style: TextStyle(
-                  color: AppColors.textColor.withOpacity(0.6),
-                  fontSize: 12,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    date,
+                    style: const TextStyle(
+                      color: AppColors.textColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.done_all_sharp,
+                    color: AppColors.textColor,
+                  ),
+                ],
               ),
             ],
           ),

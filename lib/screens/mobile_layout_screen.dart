@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:new_chat_app/features/auth/controller/auth_controller.dart';
 import 'package:new_chat_app/features/select_contacts/screens/select_contacts_screen.dart';
+import 'package:new_chat_app/features/user/screens/user_screen.dart';
 
 import '../core/configs/theme/app_colors.dart';
 import '../features/chat/widgets/contact_list.dart';
@@ -10,7 +11,7 @@ class MobileLayoutScreen extends ConsumerStatefulWidget {
   const MobileLayoutScreen({super.key});
 
   @override
-  ConsumerState<MobileLayoutScreen> createState() => _MobileLayoutScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MobileLayoutScreenState();
 }
 
 class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
@@ -48,13 +49,12 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.appBarColor,
+        backgroundColor: AppColors.backgroundColor,
         foregroundColor: AppColors.textColor,
         title: const Text(
           'WhatsApp',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: AppColors.greyColor,
           ),
         ),
         actions: [
@@ -62,14 +62,14 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
             onPressed: () {},
             icon: const Icon(
               Icons.search_rounded,
-              color: AppColors.greyColor,
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, UserScreen.routeName);
+            },
             icon: const Icon(
               Icons.person,
-              color: AppColors.greyColor,
             ),
           ),
         ],
@@ -84,7 +84,7 @@ class _MobileLayoutScreenState extends ConsumerState<MobileLayoutScreen>
           color: Colors.white,
         ),
       ),
-      body: ContactList(),
+      body: const ContactList(),
     );
   }
 }

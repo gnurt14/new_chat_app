@@ -36,25 +36,23 @@ class AuthRepository {
     return user;
   }
 
-  void signInWithPhone(BuildContext context, String phoneNumber) async {
-    try {
-      await auth.verifyPhoneNumber(
-          phoneNumber: phoneNumber,
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            await auth.signInWithCredential(credential);
-          },
-          verificationFailed: (e) {
-            throw Exception(e.message);
-          },
-          codeSent: ((String verificationId, int? resendToken) async {
-            Navigator.pushNamed(context, OTPScreen.routeName,
-                arguments: verificationId);
-          }),
-          codeAutoRetrievalTimeout: (String verificationId) {});
-    } on FirebaseException catch (e) {
-      showSnackBar(context: context, content: e.message!);
-    }
+  Future<void> signInWithPhone(BuildContext context, String phoneNumber) {
+    return auth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await auth.signInWithCredential(credential);
+      },
+      verificationFailed: (e) {
+        throw Exception(e.message);
+      },
+      codeSent: ((String verificationId, int? resendToken) async {
+        Navigator.pushNamed(context, OTPScreen.routeName,
+            arguments: verificationId);
+      }),
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
   }
+
 
   void verifyOTP({
     required BuildContext context,
@@ -66,13 +64,45 @@ class AuthRepository {
         verificationId: verificationId,
         smsCode: userOTP,
       );
-      await auth.signInWithCredential(credential);
-      Navigator.pushNamedAndRemoveUntil(
-          context, UserInformationScreen.routeName, (route) => false);
+
+      // Sign in with the credential
+      UserCredential userCredential = await auth.signInWithCredential(credential);
+      String uid = userCredential.user!.uid;
+
+      // Check if the user exists in the database
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+
+      print("User document: ${userDoc.data()}");
+      print("User exists: ${userDoc.exists}");
+
+      if (userDoc.exists) {
+        // User exists, navigate to the home screen
+        print("User already exists in the database: $uid");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (builder) => const MobileLayoutScreen()),
+              (route) => false,
+        );
+      } else {
+        // User does not exist, save user info and navigate to user information screen
+        print("User does not exist in the database, creating new user: $uid");
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          UserInformationScreen.routeName,
+              (route) => false,
+        );
+      }
     } on FirebaseException catch (e) {
+      print("FirebaseException: ${e.message}");
       showSnackBar(context: context, content: e.message!);
+    } catch (e) {
+      print("Exception: $e");
     }
   }
+
 
   void saveUserDataToFirebase({
     required String name,
@@ -115,17 +145,18 @@ class AuthRepository {
     }
   }
 
-  Stream<UserModel> userData(String userId){
+  Stream<UserModel> userData(String userId) {
     return firestore.collection('users').doc(userId).snapshots().map(
-      (event) => UserModel.fromMap(
-        event.data()!,
-      ),
-    );
+          (event) => UserModel.fromMap(
+            event.data()!,
+          ),
+        );
   }
 
-  void setUserState(bool isOnline) async{
-    await firestore.collection('users').doc(auth.currentUser!.uid).update({
-      'isOnline' : isOnline
-    });
+  void setUserState(bool isOnline) async {
+    await firestore
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .update({'isOnline': isOnline});
   }
 }

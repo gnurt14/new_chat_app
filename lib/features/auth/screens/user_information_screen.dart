@@ -82,13 +82,13 @@ class _UserInformationScreenState extends ConsumerState<UserInformationScreen> {
                     padding: const EdgeInsets.all(20),
                     child: TextField(
                       style: const TextStyle(
-                        color: AppColors.textColor,
+                        color: AppColors.darkTextColor,
                       ),
                       controller: nameController,
                       decoration: const InputDecoration(
                           hintText: 'Enter your name',
                           hintStyle: TextStyle(
-                            color: AppColors.textColor,
+                            color: AppColors.darkTextColor,
                           )),
                     ),
                   ),

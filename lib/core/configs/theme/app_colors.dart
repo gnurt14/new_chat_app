@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors{
   static const backgroundColor = Color.fromRGBO(19, 28, 33, 1);
   static const textColor = Color.fromRGBO(241, 241, 242, 1);
+  static const darkTextColor = Color.fromRGBO(37, 45, 49, 1);
   static const hintTextColor = Color.fromRGBO(114, 114, 115, 1.0);
   static const appBarColor = Color.fromRGBO(31, 44, 52, 1);
   static const webAppBarColor =  Color.fromRGBO(42, 47, 50, 1);
