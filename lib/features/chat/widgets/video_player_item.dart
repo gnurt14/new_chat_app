@@ -22,6 +22,14 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
         setState(() {}); // Refresh the state to show the first frame of the video
         videoPlayerController.setVolume(1);
       });
+
+    videoPlayerController.addListener((){
+      if(videoPlayerController.value.position == videoPlayerController.value.duration){
+        setState(() {
+          isPlay = false;
+        });
+      }
+    });
   }
 
   @override
@@ -47,6 +55,13 @@ class _VideoPlayerItemState extends State<VideoPlayerItem> {
                   if (isPlay) {
                     videoPlayerController.pause();
                   } else {
+                    if(videoPlayerController.value.position == videoPlayerController.value.duration){
+                      videoPlayerController.seekTo(Duration.zero);
+                      setState(() {
+                        isPlay = true;
+                      });
+                      videoPlayerController.play();
+                    }
                     videoPlayerController.play();
                   }
                   isPlay = !isPlay;

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:new_chat_app/common/enums/message_enum.dart';
@@ -19,6 +19,8 @@ class BottomChatField extends ConsumerStatefulWidget {
 class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   final TextEditingController _messageController = TextEditingController();
   bool isShowSendButton = false;
+  bool isShowEmojiContainer = false;
+  FocusNode focusNode = FocusNode();
 
   void sendTextMessage() async {
     if (isShowSendButton) {
@@ -49,10 +51,35 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
     }
   }
 
-  void selectVideo() async{
+  void selectVideo() async {
     File? video = await pickVideoFromGallery(context);
-    if(video != null){
+    if (video != null) {
       sendFileMessage(file: video, messageEnum: MessageEnum.video);
+    }
+  }
+
+  void hideEmojiContainer(){
+    setState(() {
+      isShowEmojiContainer = false;
+    });
+  }
+
+  void showEmojiContainer(){
+    setState(() {
+      isShowEmojiContainer = true;
+    });
+  }
+
+  void showKeyboard() => focusNode.requestFocus();
+  void hideKeyboard() => focusNode.unfocus();
+
+  void toggleEmojiKeyboardContainer(){
+    if(isShowEmojiContainer){
+      showKeyboard();
+      hideEmojiContainer();
+    }else {
+      hideKeyboard();
+      showEmojiContainer();
     }
   }
 
@@ -66,104 +93,128 @@ class _BottomChatFieldState extends ConsumerState<BottomChatField> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            flex: 5,
-            child: TextField(
-              onChanged: (value) {
-                if (value.isNotEmpty) {
+          Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: TextField(
+                  focusNode: focusNode,
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      setState(() {
+                        isShowSendButton = true;
+                      });
+                    } else {
+                      setState(() {
+                        isShowSendButton = false;
+                      });
+                    }
+                  },
+                  controller: _messageController,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                  ),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.mobileChatBoxColor,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: toggleEmojiKeyboardContainer,
+                              icon: const Icon(
+                                Icons.emoji_emotions,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.gif,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    suffixIcon: SizedBox(
+                      width: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: selectImage,
+                            icon: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: selectVideo,
+                            icon: const Icon(
+                              Icons.attach_file,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    hintText: 'Type a message!',
+                    hintStyle: const TextStyle(color: AppColors.hintTextColor),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                      borderSide: const BorderSide(
+                        width: 0,
+                        style: BorderStyle.none,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.all(10.0),
+                  ),
+                ),
+              ),
+              Flexible(
+                  flex: 1,
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.buttonColor,
+                    ),
+                    child: IconButton(
+                      onPressed: sendTextMessage,
+                      icon: Icon(
+                        isShowSendButton ? Icons.send : Icons.mic,
+                        color: AppColors.textColor,
+                      ),
+                    ),
+                  ))
+            ],
+          ),
+          isShowEmojiContainer
+              ? SizedBox(
+            height: 310,
+            child: EmojiPicker(
+              onEmojiSelected: (category, emoji) {
+                setState(() {
+                  _messageController.text =
+                      _messageController.text + emoji.emoji;
+                });
+
+                if (!isShowSendButton) {
                   setState(() {
                     isShowSendButton = true;
                   });
-                } else {
-                  setState(() {
-                    isShowSendButton = false;
-                  });
                 }
               },
-              controller: _messageController,
-              style: const TextStyle(
-                color: AppColors.textColor,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.mobileChatBoxColor,
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: SizedBox(
-                    width: 100,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.emoji_emotions,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.gif,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                suffixIcon: SizedBox(
-                  width: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: selectImage,
-                        icon: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: selectVideo,
-                        icon: const Icon(
-                          Icons.attach_file,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                hintText: 'Type a message!',
-                hintStyle: const TextStyle(color: AppColors.hintTextColor),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                  borderSide: const BorderSide(
-                    width: 0,
-                    style: BorderStyle.none,
-                  ),
-                ),
-                contentPadding: const EdgeInsets.all(10.0),
-              ),
             ),
-          ),
-          Flexible(
-              flex: 1,
-              child: Container(
-                margin: const EdgeInsets.only(left: 10),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.buttonColor,
-                ),
-                child: IconButton(
-                  onPressed: sendTextMessage,
-                  icon: Icon(
-                    isShowSendButton ? Icons.send : Icons.mic,
-                    color: AppColors.textColor,
-                  ),
-                ),
-              ))
+          )
+              : const SizedBox(),
         ],
       ),
     );
